@@ -1,0 +1,942 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LernQuest</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg2: #020617;
+      --card: #111827;
+      --card2: #1f2937;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --accent2: #38bdf8;
+      --danger: #ef4444;
+      --border: #334155;
+      --warn: #f59e0b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg2), var(--bg));
+      color: var(--text);
+    }
+
+    a {
+      color: #7dd3fc;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .hero, .card {
+      background: rgba(17,24,39,.96);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+      margin-bottom: 16px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #111827, #1e293b);
+    }
+
+    h1, h2, h3, h4, p {
+      margin-top: 0;
+    }
+
+    .muted { color: var(--muted); }
+    .small { font-size: 13px; }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stats {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .main {
+      grid-template-columns: 1fr 1fr;
+    }
+
+    .stat {
+      font-size: 30px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    textarea, input, button {
+      font: inherit;
+      border-radius: 12px;
+    }
+
+    textarea, input {
+      width: 100%;
+      padding: 12px 14px;
+      background: #0b1220;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    textarea {
+      min-height: 260px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      padding: 11px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #052e16;
+    }
+
+    .btn.secondary {
+      background: var(--accent2);
+      color: #082f49;
+    }
+
+    .btn.ghost {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn.danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .progress {
+      width: 100%;
+      height: 14px;
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .25s ease;
+    }
+
+    .week-card {
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 18px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #111827;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 6px 0 0;
+    }
+
+    .task {
+      background: #111827;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 10px 12px;
+      margin-top: 8px;
+    }
+
+    .task-line {
+      display: flex;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .task-title.done {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .resource-list, .bullet-list {
+      margin: 8px 0 0 18px;
+      padding: 0;
+    }
+
+    .resource-list li, .bullet-list li {
+      margin: 6px 0;
+    }
+
+    .section-box {
+      margin-top: 12px;
+      padding: 10px 12px;
+      border-radius: 14px;
+      background: rgba(30,41,59,.7);
+      border: 1px solid var(--border);
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 12px;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      background: rgba(11,18,32,.45);
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #14532d;
+      color: #dcfce7;
+      border: 1px solid #166534;
+      margin: 4px 6px 0 0;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .note {
+      padding: 10px 12px;
+      background: rgba(56,189,248,.08);
+      border: 1px solid rgba(56,189,248,.3);
+      border-radius: 12px;
+      color: #cbd5e1;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 900px) {
+      .main { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>📚 LernQuest</h1>
+      <p class="muted">
+        Lernplan als Text einfügen → strukturierte Wochenansicht mit klickbaren Links → Mini-Übungen abhaken → XP, Level und Streak sammeln.
+      </p>
+
+      <div class="grid stats">
+        <div class="card" style="margin:0;">
+          <div class="muted small">Level</div>
+          <div class="stat" id="levelStat">1</div>
+        </div>
+        <div class="card" style="margin:0;">
+          <div class="muted small">XP</div>
+          <div class="stat" id="xpStat">0</div>
+        </div>
+        <div class="card" style="margin:0;">
+          <div class="muted small">Streak</div>
+          <div class="stat" id="streakStat">0 🔥</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="row" style="justify-content:space-between;">
+          <strong>Fortschritt zum nächsten Level</strong>
+          <span id="levelProgressText" class="muted small">0 / 100 XP</span>
+        </div>
+        <div class="progress" style="margin-top:8px;">
+          <div class="progress-bar" id="levelBar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid main">
+      <div>
+        <div class="card">
+          <h2>📝 Lernplan einfügen</h2>
+          <p class="muted small">
+            Paste deinen langen Text hier rein. Die App versucht daraus Wochen, Ziele, Quellen, Links, Übungen und Outcomes zu bauen.
+          </p>
+          <textarea id="planInput" placeholder="Hier deinen Lernplan einfügen ..."></textarea>
+
+          <div class="row" style="margin-top:12px;">
+            <button class="btn" id="importBtn">Plan importieren</button>
+            <button class="btn secondary" id="sampleBtn">Beispielplan einsetzen</button>
+            <button class="btn ghost" id="exportBtn">Plantext kopieren</button>
+            <button class="btn danger" id="wipeBtn">Alles löschen</button>
+          </div>
+
+          <div class="note small">
+            Diese Version macht nicht mehr jeden Stichpunkt zu einer Aufgabe.  
+            Aufgaben entstehen vor allem aus den <strong>Mini-Übungen</strong>.
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>📚 Lernplan-Ansicht</h2>
+          <div id="weeksWrap"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>✅ Mini-Übungen / Aufgaben</h2>
+          <div id="taskList"></div>
+        </div>
+
+        <div class="card">
+          <h2>🏆 Erfolge</h2>
+          <div id="badgesWrap"></div>
+        </div>
+
+        <div class="card">
+          <h2>📅 Heute</h2>
+          <p class="muted" id="todayStatus">Noch nichts erledigt.</p>
+          <button class="btn ghost" id="claimDailyBtn">Tagescheck prüfen</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "lernquest_structured_v2";
+
+    const defaultState = {
+      xp: 0,
+      streak: 0,
+      level: 1,
+      tasks: [],
+      weeks: [],
+      badges: [],
+      lastClaimDate: null,
+      importedPlanText: ""
+    };
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return structuredClone(defaultState);
+      try {
+        return { ...structuredClone(defaultState), ...JSON.parse(raw) };
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function todayStr() {
+      const d = new Date();
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    }
+
+    function yesterdayStr() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,"0")}-${String(d.getDate()).padStart(2,"0")}`;
+    }
+
+    function xpForNextLevel(level) {
+      return level * 100;
+    }
+
+    function recalcLevel() {
+      let level = 1;
+      let remaining = state.xp;
+      while (remaining >= xpForNextLevel(level)) {
+        remaining -= xpForNextLevel(level);
+        level++;
+      }
+      state.level = level;
+      return remaining;
+    }
+
+    function grantBadge(name) {
+      if (!state.badges.includes(name)) state.badges.push(name);
+    }
+
+    function checkBadges() {
+      const completed = state.tasks.filter(t => t.done).length;
+      if (completed >= 1) grantBadge("Erste Übung geschafft");
+      if (completed >= 5) grantBadge("5 Übungen geschafft");
+      if (completed >= 10) grantBadge("10 Übungen geschafft");
+      if (state.streak >= 3) grantBadge("3 Tage Streak");
+      if (state.streak >= 7) grantBadge("7 Tage Streak");
+      if (state.xp >= 100) grantBadge("100 XP");
+      if (state.xp >= 300) grantBadge("300 XP");
+      if (state.weeks.length >= 4) grantBadge("4-Wochen-Plan importiert");
+    }
+
+    function getCompletedTodayCount() {
+      const today = todayStr();
+      return state.tasks.filter(t => t.doneDate === today).length;
+    }
+
+    function claimDailyCheck() {
+      const today = todayStr();
+      const yesterday = yesterdayStr();
+      const completedToday = getCompletedTodayCount();
+
+      if (completedToday < 1) {
+        alert("Mach heute erst mindestens 1 Mini-Übung fertig.");
+        return;
+      }
+
+      if (state.lastClaimDate === today) {
+        alert("Tagescheck für heute schon gezählt.");
+        return;
+      }
+
+      if (state.lastClaimDate === yesterday) {
+        state.streak += 1;
+      } else {
+        state.streak = 1;
+      }
+
+      state.lastClaimDate = today;
+      state.xp += 15;
+      recalcLevel();
+      checkBadges();
+      saveState();
+      render();
+      alert("Tagescheck gezählt: +15 XP");
+    }
+
+    function toggleTask(id) {
+      const task = state.tasks.find(t => t.id === id);
+      if (!task) return;
+
+      if (!task.done) {
+        task.done = true;
+        task.doneDate = todayStr();
+        state.xp += task.xp;
+      } else {
+        task.done = false;
+        if (task.doneDate === todayStr()) {
+          state.xp = Math.max(0, state.xp - task.xp);
+        }
+        task.doneDate = null;
+      }
+
+      recalcLevel();
+      checkBadges();
+      saveState();
+      render();
+    }
+
+    function wipeAll() {
+      const ok = confirm("Wirklich alles löschen?");
+      if (!ok) return;
+      state = structuredClone(defaultState);
+      saveState();
+      render();
+    }
+
+    function exportPlanText() {
+      if (!state.importedPlanText) {
+        alert("Noch kein Plantext da.");
+        return;
+      }
+      navigator.clipboard.writeText(state.importedPlanText)
+        .then(() => alert("Plantext kopiert."))
+        .catch(() => alert("Kopieren hat nicht geklappt."));
+    }
+
+    function samplePlanText() {
+      return `Perfekt – dann bauen wir dir einen realistischen, abend-tauglichen Lernplan (ca. 45–60 min/Tag) mit genau den Formaten, die du magst: Papers, Blogs, Videos – keine Podcasts
+
+📅 Woche 1 – Agenten verstehen wie Systeme (nicht wie NLP)
+🎯 Ziel
+Du verstehst:
+• wie Agenten wirklich laufen
+• wo Komplexität entsteht
+• warum Runtime/Orchestration wichtig ist
+
+📚 Inhalte
+1. Einstieg (sehr wichtig)
+• OpenAI – Agents Guide
+👉 https://platform.openai.com/docs/guides/agents
+
+2. Framework-Verständnis
+• LangChain Agents Docs
+👉 https://python.langchain.com/docs/modules/agents/
+
+3. Video (sehr gut verständlich)
+👉 https://www.youtube.com/watch?v=Salc9l9xZLQ
+
+🧪 Mini-Übungen
+• Nimm einen einfachen Use Case
+• Skizziere Schritte
+• wo LLM entscheidet
+• wo Tools genutzt werden
+• Wo kann es schiefgehen?
+
+🧠 Outcome Woche 1
+Du kannst erklären, wie ein Agent Schritt für Schritt arbeitet – inkl. Risiken
+
+📅 Woche 2 – Observability & AgentOps
+🎯 Ziel
+Du verstehst:
+• wie man Agenten debuggt
+• wie Betrieb funktioniert
+• warum Logs NICHT reichen
+
+📚 Inhalte
+1. Wichtigster Artikel
+👉 https://www.honeycomb.io/blog/observability-what-is-it/
+
+2. LLM Observability
+👉 https://arize.com/blog/llm-observability/
+
+3. Praxis-nah
+👉 https://www.datadoghq.com/blog/llm-observability/
+
+4. SRE Grundlagen
+👉 https://sre.google/sre-book/table-of-contents/
+
+🧪 Mini-Übungen
+• Welche Daten brauchst du, um falsche Entscheidungen zu verstehen?
+• Erstelle einen perfekten Agent Trace
+
+🧠 Outcome Woche 2
+Du kannst sagen: So muss Observability aussehen, sonst betreiben wir blind.
+
+📅 Woche 3 – Governance & Risk
+🎯 Ziel
+Du wirst stark in:
+• Risiko-Erkennung
+• Guardrails
+• Freigabe-Logik
+
+📚 Inhalte
+1. Pflichtlektüre
+👉 https://www.nist.gov/itl/ai-risk-management-framework
+
+2. Sehr guter Blog
+👉 https://www.anthropic.com/index/constitutional-ai
+
+3. Praxis
+👉 https://platform.openai.com/docs/guides/safety-best-practices
+
+🧪 Mini-Übungen
+• Was darf ein E-Mail-Agent?
+• Was darf er nicht?
+• Wo braucht er Freigabe?
+• Welche Logs sind Pflicht?
+
+🧠 Outcome Woche 3
+Du kannst Governance-Regeln selbst herleiten.
+
+📅 Woche 4 – Evaluation & Standards
+🎯 Ziel
+Du kannst:
+• Qualität systematisch messen
+• Standards definieren
+
+📚 Inhalte
+1. Sehr wichtig
+👉 https://www.deeplearning.ai/short-courses/evaluating-llm-applications/
+
+2. Paper
+👉 https://arxiv.org/abs/2307.03109
+
+3. Engineering Perspektive
+• Designing Machine Learning Systems
+
+🧪 Mini-Übungen
+• Definiere 5 KPIs
+• Baue eine einfache Eval-Logik
+• Was wäre ein Release-Stopper?
+
+🧠 Outcome Woche 4
+Du kannst Qualität messbar machen und Entscheidungen darauf basieren.`;
+    }
+
+    function splitIntoWeeks(text) {
+      const normalized = text
+        .replace(/\r/g, "")
+        .replace(/📅/g, "\n📅")
+        .replace(/\*\*/g, "")
+        .replace(/👉/g, "\n👉")
+        .replace(/•/g, "\n•")
+        .replace(/🎯/g, "\n🎯")
+        .replace(/📚/g, "\n📚")
+        .replace(/🧪/g, "\n🧪")
+        .replace(/🧠/g, "\n🧠")
+        .replace(/\n{2,}/g, "\n")
+        .trim();
+
+      const parts = normalized.split(/(?=Woche\s*\d+\s*[–-])/i);
+      return parts.filter(p => /Woche\s*\d+/i.test(p));
+    }
+
+    function parseWeekBlock(block) {
+      const week = {
+        id: crypto.randomUUID(),
+        title: "",
+        goal: [],
+        resources: [],
+        exercises: [],
+        outcome: []
+      };
+
+      const lines = block.split("\n").map(l => l.trim()).filter(Boolean);
+
+      let mode = "";
+      let pendingResourceTitle = null;
+
+      for (let i = 0; i < lines.length; i++) {
+        let line = lines[i]
+          .replace(/^[-•]\s*/, "")
+          .replace(/^👉\s*/, "")
+          .trim();
+
+        if (!line) continue;
+
+        if (/^Woche\s*\d+/i.test(line)) {
+          week.title = line;
+          mode = "";
+          continue;
+        }
+
+        if (/^Ziel$/i.test(line)) {
+          mode = "goal";
+          continue;
+        }
+
+        if (/^Inhalte$/i.test(line)) {
+          mode = "resources";
+          continue;
+        }
+
+        if (/^Mini-Übungen$/i.test(line)) {
+          mode = "exercises";
+          continue;
+        }
+
+        if (/^Outcome/i.test(line)) {
+          mode = "outcome";
+          continue;
+        }
+
+        if (/^https?:\/\//i.test(line)) {
+          const label = pendingResourceTitle || new URL(line).hostname.replace("www.", "");
+          week.resources.push({ label, url: line });
+          pendingResourceTitle = null;
+          continue;
+        }
+
+        if (/^\d+\./.test(line)) {
+          const title = line.replace(/^\d+\.\s*/, "").trim();
+          if (title) {
+            pendingResourceTitle = title;
+          }
+          continue;
+        }
+
+        if (mode === "resources") {
+          if (
+            line.length > 2 &&
+            !/^Fokus:/i.test(line) &&
+            !/^Nur lesen:/i.test(line) &&
+            !/^Suchbegriff:/i.test(line) &&
+            !/^Kapitel zu/i.test(line)
+          ) {
+            pendingResourceTitle = line;
+          }
+          continue;
+        }
+
+        if (mode === "goal") {
+          week.goal.push(line);
+          continue;
+        }
+
+        if (mode === "exercises") {
+          if (
+            line.length > 2 &&
+            !/^Nimm /i.test(line) &&
+            !/^Stell dir vor/i.test(line) &&
+            !/^Beantworte:/i.test(line) &&
+            !/^Frage:/i.test(line) &&
+            !/^Erstelle:/i.test(line) &&
+            !/^Baue:/i.test(line)
+          ) {
+            week.exercises.push(line);
+          } else if (
+            /^Nimm /i.test(line) ||
+            /^Stell dir vor/i.test(line) ||
+            /^Beantworte:/i.test(line) ||
+            /^Frage:/i.test(line) ||
+            /^Erstelle:/i.test(line) ||
+            /^Baue:/i.test(line)
+          ) {
+            // meta-zeilen skip
+          }
+          continue;
+        }
+
+        if (mode === "outcome") {
+          week.outcome.push(line);
+          continue;
+        }
+      }
+
+      week.goal = dedupe(week.goal);
+      week.resources = dedupeObjects(week.resources, x => `${x.label}|${x.url}`);
+      week.exercises = dedupe(week.exercises);
+      week.outcome = dedupe(week.outcome);
+
+      return week;
+    }
+
+    function dedupe(arr) {
+      return [...new Set(arr.map(x => x.trim()).filter(Boolean))];
+    }
+
+    function dedupeObjects(arr, keyFn) {
+      const map = new Map();
+      arr.forEach(item => {
+        const key = keyFn(item);
+        if (!map.has(key)) map.set(key, item);
+      });
+      return [...map.values()];
+    }
+
+    function xpForExercise(text) {
+      const t = text.toLowerCase();
+      if (t.includes("kpi") || t.includes("trace") || t.includes("eval") || t.includes("governance")) return 30;
+      if (t.includes("release-stopper") || t.includes("risiken")) return 30;
+      return 20;
+    }
+
+    function buildTasksFromWeeks(weeks) {
+      const tasks = [];
+      weeks.forEach(week => {
+        week.exercises.forEach(ex => {
+          tasks.push({
+            id: crypto.randomUUID(),
+            weekTitle: week.title,
+            title: ex,
+            xp: xpForExercise(ex),
+            done: false,
+            doneDate: null
+          });
+        });
+      });
+      return tasks;
+    }
+
+    function parsePlan(text) {
+      const weekBlocks = splitIntoWeeks(text);
+      const weeks = weekBlocks.map(parseWeekBlock).filter(w => w.title);
+
+      state.weeks = weeks;
+      state.tasks = buildTasksFromWeeks(weeks);
+      state.importedPlanText = text;
+      checkBadges();
+      saveState();
+      render();
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function renderStats() {
+      const progressXp = recalcLevel();
+      document.getElementById("xpStat").textContent = state.xp;
+      document.getElementById("streakStat").textContent = `${state.streak} 🔥`;
+      document.getElementById("levelStat").textContent = state.level;
+      const next = xpForNextLevel(state.level);
+      const percent = Math.min(100, Math.round((progressXp / next) * 100));
+      document.getElementById("levelBar").style.width = percent + "%";
+      document.getElementById("levelProgressText").textContent = `${progressXp} / ${next} XP`;
+    }
+
+    function renderWeeks() {
+      const wrap = document.getElementById("weeksWrap");
+      wrap.innerHTML = "";
+
+      if (!state.weeks.length) {
+        wrap.innerHTML = `<div class="empty">Noch kein strukturierter Lernplan importiert.</div>`;
+        return;
+      }
+
+      state.weeks.forEach(week => {
+        const div = document.createElement("div");
+        div.className = "week-card";
+
+        div.innerHTML = `
+          <h3>${escapeHtml(week.title)}</h3>
+
+          ${week.goal.length ? `
+            <div class="section-box">
+              <strong>🎯 Ziel</strong>
+              <ul class="bullet-list">
+                ${week.goal.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+              </ul>
+            </div>
+          ` : ""}
+
+          ${week.resources.length ? `
+            <div class="section-box">
+              <strong>📚 Lernquellen</strong>
+              <ul class="resource-list">
+                ${week.resources.map(r => `
+                  <li>
+                    <a href="${escapeHtml(r.url)}" target="_blank" rel="noopener noreferrer">
+                      ${escapeHtml(r.label)}
+                    </a>
+                  </li>
+                `).join("")}
+              </ul>
+            </div>
+          ` : ""}
+
+          ${week.exercises.length ? `
+            <div class="section-box">
+              <strong>🧪 Mini-Übungen</strong>
+              <ul class="bullet-list">
+                ${week.exercises.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+              </ul>
+            </div>
+          ` : ""}
+
+          ${week.outcome.length ? `
+            <div class="section-box">
+              <strong>🧠 Outcome</strong>
+              <ul class="bullet-list">
+                ${week.outcome.map(item => `<li>${escapeHtml(item)}</li>`).join("")}
+              </ul>
+            </div>
+          ` : ""}
+        `;
+
+        wrap.appendChild(div);
+      });
+    }
+
+    function renderTasks() {
+      const wrap = document.getElementById("taskList");
+      wrap.innerHTML = "";
+
+      if (!state.tasks.length) {
+        wrap.innerHTML = `<div class="empty">Noch keine Mini-Übungen vorhanden.</div>`;
+        return;
+      }
+
+      state.tasks.forEach(task => {
+        const div = document.createElement("div");
+        div.className = "task";
+        div.innerHTML = `
+          <div class="task-line">
+            <input type="checkbox" ${task.done ? "checked" : ""} data-id="${task.id}" class="task-check" style="width:20px;height:20px;accent-color:#22c55e;">
+            <div>
+              <div class="task-title ${task.done ? "done" : ""}"><strong>${escapeHtml(task.title)}</strong></div>
+              <div>
+                <span class="pill">${escapeHtml(task.weekTitle)}</span>
+                <span class="pill">${task.xp} XP</span>
+                ${task.doneDate ? `<span class="pill">Erledigt: ${task.doneDate}</span>` : ""}
+              </div>
+            </div>
+          </div>
+        `;
+        wrap.appendChild(div);
+      });
+
+      wrap.querySelectorAll(".task-check").forEach(el => {
+        el.addEventListener("change", e => toggleTask(e.target.dataset.id));
+      });
+    }
+
+    function renderBadges() {
+      const wrap = document.getElementById("badgesWrap");
+      wrap.innerHTML = "";
+
+      if (!state.badges.length) {
+        wrap.innerHTML = `<div class="empty">Noch keine Badges.</div>`;
+        return;
+      }
+
+      state.badges.forEach(b => {
+        const span = document.createElement("span");
+        span.className = "badge";
+        span.textContent = "🏅 " + b;
+        wrap.appendChild(span);
+      });
+    }
+
+    function renderTodayStatus() {
+      const count = getCompletedTodayCount();
+      const el = document.getElementById("todayStatus");
+      if (count === 0) el.textContent = "Noch nichts erledigt.";
+      else if (count === 1) el.textContent = "Heute schon 1 Übung geschafft.";
+      else el.textContent = `Heute schon ${count} Übungen geschafft.`;
+    }
+
+    function render() {
+      renderStats();
+      renderWeeks();
+      renderTasks();
+      renderBadges();
+      renderTodayStatus();
+      document.getElementById("planInput").value = state.importedPlanText || "";
+    }
+
+    let state = loadState();
+    checkBadges();
+    render();
+
+    document.getElementById("importBtn").addEventListener("click", () => {
+      const text = document.getElementById("planInput").value.trim();
+      if (!text) {
+        alert("Bitte erst deinen Plan einfügen.");
+        return;
+      }
+      parsePlan(text);
+      alert("Plan strukturiert importiert.");
+    });
+
+    document.getElementById("sampleBtn").addEventListener("click", () => {
+      const sample = samplePlanText();
+      document.getElementById("planInput").value = sample;
+      parsePlan(sample);
+    });
+
+    document.getElementById("exportBtn").addEventListener("click", exportPlanText);
+    document.getElementById("wipeBtn").addEventListener("click", wipeAll);
+    document.getElementById("claimDailyBtn").addEventListener("click", claimDailyCheck);
+  </script>
+</body>
+</html>
