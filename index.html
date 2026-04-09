@@ -1,0 +1,883 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>LernQuest</title>
+  <style>
+    :root {
+      --bg: #0f172a;
+      --bg2: #020617;
+      --card: #111827;
+      --card2: #1f2937;
+      --text: #f8fafc;
+      --muted: #94a3b8;
+      --accent: #22c55e;
+      --accent2: #38bdf8;
+      --danger: #ef4444;
+      --border: #334155;
+      --warn: #f59e0b;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: system-ui, Arial, sans-serif;
+      background: linear-gradient(180deg, var(--bg2), var(--bg));
+      color: var(--text);
+    }
+
+    .container {
+      max-width: 980px;
+      margin: 0 auto;
+      padding: 16px;
+    }
+
+    .hero, .card {
+      background: rgba(17,24,39,.96);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 18px;
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+      margin-bottom: 16px;
+    }
+
+    .hero {
+      background: linear-gradient(135deg, #111827, #1e293b);
+    }
+
+    h1, h2, h3, p {
+      margin-top: 0;
+    }
+
+    .muted {
+      color: var(--muted);
+    }
+
+    .grid {
+      display: grid;
+      gap: 16px;
+    }
+
+    .stats {
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .main {
+      grid-template-columns: 1.25fr .95fr;
+    }
+
+    .stat {
+      font-size: 30px;
+      font-weight: 800;
+      margin-top: 8px;
+    }
+
+    .small {
+      font-size: 13px;
+    }
+
+    .row {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    textarea, input, button, select {
+      font: inherit;
+      border-radius: 12px;
+    }
+
+    textarea, input, select {
+      width: 100%;
+      padding: 12px 14px;
+      background: #0b1220;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    textarea {
+      min-height: 240px;
+      resize: vertical;
+    }
+
+    button {
+      border: none;
+      padding: 11px 14px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .btn {
+      background: var(--accent);
+      color: #052e16;
+    }
+
+    .btn.secondary {
+      background: var(--accent2);
+      color: #082f49;
+    }
+
+    .btn.ghost {
+      background: #1e293b;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
+
+    .btn.danger {
+      background: var(--danger);
+      color: white;
+    }
+
+    .progress {
+      width: 100%;
+      height: 14px;
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .progress-bar {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, var(--accent), var(--accent2));
+      transition: width .25s ease;
+    }
+
+    .task {
+      background: #0b1220;
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 12px;
+      margin-bottom: 10px;
+    }
+
+    .task-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: flex-start;
+    }
+
+    .task-left {
+      display: flex;
+      gap: 12px;
+      align-items: flex-start;
+      flex: 1;
+    }
+
+    .task-title.done {
+      text-decoration: line-through;
+      color: var(--muted);
+    }
+
+    .pill {
+      display: inline-block;
+      padding: 6px 10px;
+      border-radius: 999px;
+      background: #111827;
+      border: 1px solid var(--border);
+      color: var(--muted);
+      font-size: 12px;
+      margin: 6px 6px 0 0;
+    }
+
+    .badge {
+      display: inline-block;
+      padding: 8px 12px;
+      border-radius: 999px;
+      background: #14532d;
+      color: #dcfce7;
+      border: 1px solid #166534;
+      margin: 4px 6px 0 0;
+      font-size: 13px;
+      font-weight: 700;
+    }
+
+    .empty {
+      color: var(--muted);
+      padding: 12px;
+      border: 1px dashed var(--border);
+      border-radius: 14px;
+      background: rgba(11,18,32,.45);
+    }
+
+    .section-title {
+      display: flex;
+      justify-content: space-between;
+      gap: 10px;
+      align-items: center;
+    }
+
+    .note {
+      padding: 10px 12px;
+      background: rgba(56,189,248,.08);
+      border: 1px solid rgba(56,189,248,.3);
+      border-radius: 12px;
+      color: #cbd5e1;
+      margin-top: 10px;
+    }
+
+    .warn {
+      padding: 10px 12px;
+      background: rgba(245,158,11,.08);
+      border: 1px solid rgba(245,158,11,.35);
+      border-radius: 12px;
+      color: #fde68a;
+      margin-top: 10px;
+    }
+
+    @media (max-width: 820px) {
+      .main {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="hero">
+      <h1>📚 LernQuest</h1>
+      <p class="muted">
+        Lernplan als Text einfügen → Aufgaben erzeugen → täglich abhaken → XP, Level und Streak sammeln.
+      </p>
+
+      <div class="grid stats">
+        <div class="card" style="margin:0;">
+          <div class="muted small">Level</div>
+          <div class="stat" id="levelStat">1</div>
+        </div>
+        <div class="card" style="margin:0;">
+          <div class="muted small">XP</div>
+          <div class="stat" id="xpStat">0</div>
+        </div>
+        <div class="card" style="margin:0;">
+          <div class="muted small">Streak</div>
+          <div class="stat" id="streakStat">0 🔥</div>
+        </div>
+      </div>
+
+      <div style="margin-top:14px;">
+        <div class="row" style="justify-content:space-between;">
+          <strong>Fortschritt zum nächsten Level</strong>
+          <span id="levelProgressText" class="muted small">0 / 100 XP</span>
+        </div>
+        <div class="progress" style="margin-top:8px;">
+          <div class="progress-bar" id="levelBar"></div>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid main">
+      <div>
+        <div class="card">
+          <div class="section-title">
+            <h2>📝 Lernplan als Text einfügen</h2>
+          </div>
+
+          <p class="muted small">
+            Einfach hier deinen Plan reinpaste'n. Die App macht aus vielen Zeilen automatisch Aufgaben.
+          </p>
+
+          <textarea id="planInput" placeholder="Beispiel:
+Woche 1 – Agenten verstehen
+OpenAI Agents Guide
+LangChain Agents Docs
+Video: LLM Agents Explained Simply
+
+Woche 2 – Observability
+Honeycomb Observability
+Arize LLM Observability
+Datadog LLM Observability"></textarea>
+
+          <div class="note small">
+            Regeln:
+            <br>• Jede nicht-leere Zeile wird meistens zu einer Aufgabe
+            <br>• Zeilen mit „Woche …“ werden als Überschrift erkannt
+            <br>• Links werden ignoriert
+            <br>• Bullet-Zeilen wie „• OpenAI Agents Guide“ funktionieren gut
+          </div>
+
+          <div class="row" style="margin-top:12px;">
+            <button class="btn" id="importBtn">Lernplan importieren</button>
+            <button class="btn secondary" id="sampleBtn">Deinen Beispielplan einsetzen</button>
+            <button class="btn ghost" id="appendBtn">Zusätzlich importieren</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <div class="section-title">
+            <h2>✅ Aufgaben</h2>
+            <div class="row">
+              <button class="btn ghost small" id="showAllBtn">Alle</button>
+              <button class="btn ghost small" id="showOpenBtn">Offen</button>
+              <button class="btn ghost small" id="showDoneBtn">Erledigt</button>
+            </div>
+          </div>
+          <div id="taskList"></div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h2>🏆 Erfolge</h2>
+          <div id="badgesWrap"></div>
+        </div>
+
+        <div class="card">
+          <h2>📅 Heute</h2>
+          <p class="muted" id="todayStatus">Noch nichts erledigt.</p>
+          <button class="btn ghost" id="claimDailyBtn">Tagescheck prüfen</button>
+          <div class="note small">
+            Wenn du heute mindestens eine Aufgabe erledigt hast, bekommst du deinen Tagescheck und die Streak zählt hoch.
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>➕ Einzelne Aufgabe hinzufügen</h2>
+          <input id="singleTaskInput" placeholder="z. B. Woche 3 – NIST Risk Kategorien lesen" />
+          <div class="row" style="margin-top:10px;">
+            <select id="singleTaskXp">
+              <option value="10">10 XP</option>
+              <option value="15">15 XP</option>
+              <option value="20" selected>20 XP</option>
+              <option value="30">30 XP</option>
+              <option value="40">40 XP</option>
+            </select>
+            <button class="btn" id="addSingleBtn">Hinzufügen</button>
+          </div>
+        </div>
+
+        <div class="card">
+          <h2>🗑️ Daten</h2>
+          <div class="row">
+            <button class="btn ghost" id="exportBtn">Plantext exportieren</button>
+            <button class="btn danger" id="wipeBtn">Alles löschen</button>
+          </div>
+          <div class="warn small">
+            Löscht Aufgaben, XP, Streak und importierten Text.
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = "lernquest_text_import_v1";
+
+    const defaultState = {
+      xp: 0,
+      streak: 0,
+      level: 1,
+      tasks: [],
+      badges: [],
+      lastClaimDate: null,
+      importedPlanText: "",
+      filter: "all"
+    };
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) return structuredClone(defaultState);
+      try {
+        return { ...structuredClone(defaultState), ...JSON.parse(raw) };
+      } catch {
+        return structuredClone(defaultState);
+      }
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+    }
+
+    function todayStr() {
+      const d = new Date();
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function yesterdayStr() {
+      const d = new Date();
+      d.setDate(d.getDate() - 1);
+      const y = d.getFullYear();
+      const m = String(d.getMonth() + 1).padStart(2, "0");
+      const day = String(d.getDate()).padStart(2, "0");
+      return `${y}-${m}-${day}`;
+    }
+
+    function xpForNextLevel(level) {
+      return level * 100;
+    }
+
+    function recalcLevel() {
+      let level = 1;
+      let remaining = state.xp;
+      while (remaining >= xpForNextLevel(level)) {
+        remaining -= xpForNextLevel(level);
+        level++;
+      }
+      state.level = level;
+      return remaining;
+    }
+
+    function grantBadge(name) {
+      if (!state.badges.includes(name)) state.badges.push(name);
+    }
+
+    function checkBadges() {
+      const completed = state.tasks.filter(t => t.done).length;
+      if (completed >= 1) grantBadge("Erste Aufgabe geschafft");
+      if (completed >= 5) grantBadge("5 Aufgaben erledigt");
+      if (completed >= 10) grantBadge("10 Aufgaben erledigt");
+      if (state.streak >= 3) grantBadge("3 Tage Streak");
+      if (state.streak >= 7) grantBadge("7 Tage Streak");
+      if (state.xp >= 100) grantBadge("100 XP");
+      if (state.xp >= 300) grantBadge("300 XP");
+      if (state.tasks.length >= 10) grantBadge("Plan importiert");
+    }
+
+    function getCompletedTodayCount() {
+      const today = todayStr();
+      return state.tasks.filter(t => t.doneDate === today).length;
+    }
+
+    function claimDailyCheck() {
+      const today = todayStr();
+      const yesterday = yesterdayStr();
+      const completedToday = getCompletedTodayCount();
+
+      if (completedToday < 1) {
+        alert("Mach heute erst mindestens 1 Aufgabe fertig.");
+        return;
+      }
+
+      if (state.lastClaimDate === today) {
+        alert("Tagescheck für heute schon gezählt.");
+        return;
+      }
+
+      if (state.lastClaimDate === yesterday) {
+        state.streak += 1;
+      } else {
+        state.streak = 1;
+      }
+
+      state.lastClaimDate = today;
+      state.xp += 15;
+      recalcLevel();
+      checkBadges();
+      saveState();
+      render();
+      alert("Tagescheck gezählt: +15 XP");
+    }
+
+    function addTask(title, xp = 20, section = "") {
+      state.tasks.unshift({
+        id: crypto.randomUUID(),
+        title,
+        section,
+        xp: Number(xp),
+        done: false,
+        doneDate: null,
+        createdAt: Date.now()
+      });
+    }
+
+    function guessXp(line) {
+      const lower = line.toLowerCase();
+
+      if (
+        lower.includes("deep dive") ||
+        lower.includes("reflexion") ||
+        lower.includes("kpi") ||
+        lower.includes("eval") ||
+        lower.includes("governance") ||
+        lower.includes("trace bauen") ||
+        lower.includes("skizziere") ||
+        lower.includes("analysieren")
+      ) return 30;
+
+      if (
+        lower.includes("video") ||
+        lower.includes("blog") ||
+        lower.includes("artikel") ||
+        lower.includes("lesen") ||
+        lower.includes("guide") ||
+        lower.includes("docs") ||
+        lower.includes("paper")
+      ) return 20;
+
+      if (lower.includes("optional") || lower.includes("leicht")) return 10;
+
+      return 20;
+    }
+
+    function cleanLine(line) {
+      let s = line.trim();
+
+      s = s.replace(/^[-•*]\s*/, "");
+      s = s.replace(/^👉\s*/, "");
+      s = s.replace(/^🎯\s*/, "");
+      s = s.replace(/^📚\s*/, "");
+      s = s.replace(/^🧪\s*/, "");
+      s = s.replace(/^🧠\s*/, "");
+      s = s.replace(/^📅\s*/, "");
+      s = s.replace(/^⚡\s*/, "");
+      s = s.replace(/^🔁\s*/, "");
+      s = s.replace(/^✅\s*/, "");
+
+      return s.trim();
+    }
+
+    function shouldIgnoreLine(line) {
+      const s = line.trim();
+      if (!s) return true;
+      if (/^https?:\/\//i.test(s)) return true;
+      if (/^perfekt/i.test(s)) return true;
+      if (/^ziel$/i.test(s)) return true;
+      if (/^inhalte$/i.test(s)) return true;
+      if (/^mini-übungen$/i.test(s)) return true;
+      if (/^outcome/i.test(s)) return true;
+      if (/^lernplan$/i.test(s)) return true;
+      if (/^gesamtstruktur/i.test(s)) return true;
+      if (/^wochenend-format/i.test(s)) return true;
+      if (/^der wichtigste meta-tipp/i.test(s)) return true;
+      if (/^realistisches ergebnis/i.test(s)) return true;
+      if (/^du verstehst:?$/i.test(s)) return true;
+      if (/^du kannst:?$/i.test(s)) return true;
+      if (/^mach immer:?$/i.test(s)) return true;
+      if (/^frage dich:?$/i.test(s)) return true;
+      if (/^beantworte:?$/i.test(s)) return true;
+      if (/^erstelle:?$/i.test(s)) return true;
+      if (/^nimm /i.test(s) && s.length < 45) return true;
+      if (/^suchbegriff:/i.test(s)) return true;
+      return false;
+    }
+
+    function isWeekHeading(line) {
+      return /woche\s*\d+/i.test(line);
+    }
+
+    function parsePlanText(text, append = false) {
+      const lines = text.split("\n");
+      let currentSection = "";
+
+      if (!append) {
+        state.tasks = [];
+      }
+
+      for (let raw of lines) {
+        let line = cleanLine(raw);
+        if (shouldIgnoreLine(line)) continue;
+
+        if (isWeekHeading(line)) {
+          currentSection = line;
+          continue;
+        }
+
+        if (line.length < 4) continue;
+
+        let title = line;
+        let xp = guessXp(line);
+
+        // Versuche unnötige Prefixe rauszunehmen
+        title = title.replace(/^Nur lesen:\s*/i, "");
+        title = title.replace(/^Fokus:\s*/i, "");
+        title = title.replace(/^Kapitel zu:\s*/i, "");
+
+        // Falls es nur eine Meta-Zeile ist, skippen
+        const lower = title.toLowerCase();
+        if (
+          lower === "tool usage" ||
+          lower === "multi-step reasoning" ||
+          lower === "agent patterns" ||
+          lower === "tracing" ||
+          lower === "evaluation im betrieb" ||
+          lower === "incident management" ||
+          lower === "risk kategorien" ||
+          lower === "governance prinzipien" ||
+          lower === "steuerung von verhalten"
+        ) {
+          continue;
+        }
+
+        const fullTitle = currentSection ? `${currentSection} – ${title}` : title;
+        addTask(fullTitle, xp, currentSection);
+      }
+
+      state.importedPlanText = text;
+      checkBadges();
+      saveState();
+      render();
+    }
+
+    function toggleTask(id) {
+      const task = state.tasks.find(t => t.id === id);
+      if (!task) return;
+
+      if (!task.done) {
+        task.done = true;
+        task.doneDate = todayStr();
+        state.xp += task.xp;
+      } else {
+        task.done = false;
+        if (task.doneDate === todayStr()) {
+          state.xp = Math.max(0, state.xp - task.xp);
+        }
+        task.doneDate = null;
+      }
+
+      recalcLevel();
+      checkBadges();
+      saveState();
+      render();
+    }
+
+    function deleteTask(id) {
+      const idx = state.tasks.findIndex(t => t.id === id);
+      if (idx === -1) return;
+
+      const task = state.tasks[idx];
+      if (task.done && task.doneDate === todayStr()) {
+        state.xp = Math.max(0, state.xp - task.xp);
+      }
+
+      state.tasks.splice(idx, 1);
+      recalcLevel();
+      saveState();
+      render();
+    }
+
+    function renderStats() {
+      const progressXp = recalcLevel();
+
+      document.getElementById("xpStat").textContent = state.xp;
+      document.getElementById("streakStat").textContent = `${state.streak} 🔥`;
+      document.getElementById("levelStat").textContent = state.level;
+
+      const next = xpForNextLevel(state.level);
+      const percent = Math.min(100, Math.round((progressXp / next) * 100));
+      document.getElementById("levelBar").style.width = percent + "%";
+      document.getElementById("levelProgressText").textContent = `${progressXp} / ${next} XP`;
+    }
+
+    function renderTasks() {
+      const wrap = document.getElementById("taskList");
+      wrap.innerHTML = "";
+
+      let tasks = [...state.tasks];
+
+      if (state.filter === "open") {
+        tasks = tasks.filter(t => !t.done);
+      } else if (state.filter === "done") {
+        tasks = tasks.filter(t => t.done);
+      }
+
+      if (tasks.length === 0) {
+        wrap.innerHTML = `<div class="empty">Noch keine Aufgaben. Füge oben deinen Lernplan als Text ein.</div>`;
+        return;
+      }
+
+      for (const task of tasks) {
+        const div = document.createElement("div");
+        div.className = "task";
+
+        div.innerHTML = `
+          <div class="task-top">
+            <div class="task-left">
+              <input type="checkbox" ${task.done ? "checked" : ""} data-id="${task.id}" class="task-check" style="width:20px;height:20px;accent-color:#22c55e;">
+              <div>
+                <div class="task-title ${task.done ? "done" : ""}">
+                  <strong>${escapeHtml(task.title)}</strong>
+                </div>
+                <div>
+                  ${task.section ? `<span class="pill">${escapeHtml(task.section)}</span>` : ""}
+                  <span class="pill">${task.xp} XP</span>
+                  ${task.doneDate ? `<span class="pill">Erledigt: ${task.doneDate}</span>` : ""}
+                </div>
+              </div>
+            </div>
+            <button class="btn danger delete-btn" data-id="${task.id}">Löschen</button>
+          </div>
+        `;
+        wrap.appendChild(div);
+      }
+
+      wrap.querySelectorAll(".task-check").forEach(el => {
+        el.addEventListener("change", e => toggleTask(e.target.dataset.id));
+      });
+
+      wrap.querySelectorAll(".delete-btn").forEach(el => {
+        el.addEventListener("click", e => deleteTask(e.target.dataset.id));
+      });
+    }
+
+    function renderBadges() {
+      const wrap = document.getElementById("badgesWrap");
+      wrap.innerHTML = "";
+
+      if (state.badges.length === 0) {
+        wrap.innerHTML = `<div class="empty">Noch keine Badges.</div>`;
+        return;
+      }
+
+      state.badges.forEach(b => {
+        const span = document.createElement("span");
+        span.className = "badge";
+        span.textContent = "🏅 " + b;
+        wrap.appendChild(span);
+      });
+    }
+
+    function renderTodayStatus() {
+      const count = getCompletedTodayCount();
+      const el = document.getElementById("todayStatus");
+
+      if (count === 0) el.textContent = "Noch nichts erledigt.";
+      else if (count === 1) el.textContent = "Heute schon 1 Aufgabe geschafft.";
+      else el.textContent = `Heute schon ${count} Aufgaben geschafft.`;
+    }
+
+    function escapeHtml(str) {
+      return String(str)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    function wipeAll() {
+      const ok = confirm("Wirklich alles löschen?");
+      if (!ok) return;
+      state = structuredClone(defaultState);
+      saveState();
+      document.getElementById("planInput").value = "";
+      render();
+    }
+
+    function exportPlanText() {
+      if (!state.importedPlanText) {
+        alert("Noch kein importierter Plantext vorhanden.");
+        return;
+      }
+      navigator.clipboard.writeText(state.importedPlanText)
+        .then(() => alert("Plantext in die Zwischenablage kopiert."))
+        .catch(() => alert("Kopieren hat nicht geklappt."));
+    }
+
+    function samplePlanText() {
+      return `lernplan
+
+Woche 1 – Agenten verstehen wie Systeme
+OpenAI – Agents Guide
+LangChain Agents Docs
+Video: LLM Agents Explained Simply
+Use Case skizzieren
+Wo kann es schiefgehen?
+
+Woche 2 – Observability & AgentOps
+Honeycomb Observability
+Arize LLM Observability
+Datadog LLM Observability
+SRE Monitoring
+Incident Management
+Perfekten Agent Trace als Liste erstellen
+
+Woche 3 – Governance & Risk
+NIST AI Risk Framework
+Risk Kategorien
+Governance Prinzipien
+Constitutional AI
+Safety Best Practices
+E-Mail-Agent: Was darf er? Was darf er nicht? Wo braucht er Freigabe?
+
+Woche 4 – Evaluation & Standards
+Evaluating LLM Applications
+LLM Evaluation Overview
+Designing Machine Learning Systems
+5 KPIs definieren
+Eval-Logik gedanklich bauen
+Release-Stopper festlegen
+
+Wochenende
+Zusammenfassung 1 Seite
+Transfer fürs Team
+3 Fragen fürs Team vorbereiten`;
+    }
+
+    function render() {
+      renderStats();
+      renderTasks();
+      renderBadges();
+      renderTodayStatus();
+      document.getElementById("planInput").value = state.importedPlanText || "";
+    }
+
+    let state = loadState();
+    checkBadges();
+    render();
+
+    document.getElementById("importBtn").addEventListener("click", () => {
+      const text = document.getElementById("planInput").value.trim();
+      if (!text) {
+        alert("Bitte erst deinen Lernplan einfügen.");
+        return;
+      }
+      parsePlanText(text, false);
+      alert("Lernplan importiert.");
+    });
+
+    document.getElementById("appendBtn").addEventListener("click", () => {
+      const text = document.getElementById("planInput").value.trim();
+      if (!text) {
+        alert("Bitte erst Text einfügen.");
+        return;
+      }
+      parsePlanText(text, true);
+      alert("Text zusätzlich importiert.");
+    });
+
+    document.getElementById("sampleBtn").addEventListener("click", () => {
+      document.getElementById("planInput").value = samplePlanText();
+      state.importedPlanText = samplePlanText();
+      saveState();
+      render();
+    });
+
+    document.getElementById("claimDailyBtn").addEventListener("click", claimDailyCheck);
+    document.getElementById("wipeBtn").addEventListener("click", wipeAll);
+    document.getElementById("exportBtn").addEventListener("click", exportPlanText);
+
+    document.getElementById("showAllBtn").addEventListener("click", () => {
+      state.filter = "all"; saveState(); render();
+    });
+    document.getElementById("showOpenBtn").addEventListener("click", () => {
+      state.filter = "open"; saveState(); render();
+    });
+    document.getElementById("showDoneBtn").addEventListener("click", () => {
+      state.filter = "done"; saveState(); render();
+    });
+
+    document.getElementById("addSingleBtn").addEventListener("click", () => {
+      const title = document.getElementById("singleTaskInput").value.trim();
+      const xp = document.getElementById("singleTaskXp").value;
+      if (!title) {
+        alert("Bitte eine Aufgabe eingeben.");
+        return;
+      }
+      addTask(title, xp, "");
+      state.importedPlanText = document.getElementById("planInput").value;
+      checkBadges();
+      saveState();
+      render();
+      document.getElementById("singleTaskInput").value = "";
+    });
+  </script>
+</body>
+  </html>
